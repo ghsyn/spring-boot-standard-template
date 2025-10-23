@@ -12,8 +12,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @WebMvcTest
 class ProductControllerTest {
@@ -43,6 +43,31 @@ class ProductControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().string("제품 등록"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("[실패케이스] POST /api/v1/products JSON 요청 시 name 값은 필수이다.")
+    void invalidRequestTest() throws Exception {
+        // given
+        ProductCreateRequest request = ProductCreateRequest.builder()
+                // 제품명 요청 값 누락
+//                .name("제품명")
+                .brand("제조사")
+                .description("제품에 대한 설명입니다.")
+                .build();
+
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // expected
+        mockMvc.perform(post("/api/v1/products")
+                        .contentType(APPLICATION_JSON)
+                        .content(jsonRequest)
+                )
+                .andExpect(status().isBadRequest()) // 400
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+                .andExpect(jsonPath("$.validation.name").value("제품명을 입력해주세요."))
                 .andDo(print());
     }
 
