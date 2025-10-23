@@ -1,13 +1,18 @@
 package com.olpang.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.olpang.domain.Product;
+import com.olpang.repository.ProductRepository;
 import com.olpang.request.ProductCreateRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -15,7 +20,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@WebMvcTest
+@AutoConfigureMockMvc   // mockMvc 사용하기 위해 @WebMvcTest에서 가져옴
+@SpringBootTest // service, repository 사용 -> 통합 테스트로 변경
 class ProductControllerTest {
 
     @Autowired
@@ -24,8 +30,17 @@ class ProductControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ProductRepository productRepository;
+
+    @BeforeEach
+    void clean() {
+        productRepository.deleteAll();
+    }
+
     @Test
-    @DisplayName("요청 값을 JSON에 담아 POST /api/v1/products 요청 시 '제품 등록' 문자열을 출력한다.")
+    @DisplayName("요청 값을 JSON에 담아 POST /api/v1/products 요청 시 DB에 값이 저장된다.")
+    // mockMvc 테스트 최소화하기, SpringBootTest로 repository(db)에 저장되는지 (= 실제로 save 작업이 잘 이루어졌는지) 확인하는 것이 중요
     void postTest() throws Exception {
         // given
         ProductCreateRequest request = ProductCreateRequest.builder()
@@ -36,14 +51,20 @@ class ProductControllerTest {
 
         String jsonRequest = objectMapper.writeValueAsString(request);
 
-        // expected
+        // when
         mockMvc.perform(post("/api/v1/products")
-                        .contentType(APPLICATION_JSON)  // mockMvc contentType 기본값: "text/html"
-                        .content(jsonRequest)  // json object로 비교
-                )
+                                .contentType(APPLICATION_JSON)
+                                .content(jsonRequest))
                 .andExpect(status().isOk())
-                .andExpect(content().string("제품 등록"))
                 .andDo(print());
+
+        // then
+        assertEquals(1L, productRepository.count());
+
+        Product product = productRepository.findAll().get(0);
+        assertEquals("제품명", product.getName());
+        assertEquals("제조사", product.getBrand());
+        assertEquals("제품에 대한 설명입니다.", product.getDescription());
     }
 
     @Test
