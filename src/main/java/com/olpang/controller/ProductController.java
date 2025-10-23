@@ -1,6 +1,7 @@
 package com.olpang.controller;
 
 import com.olpang.request.ProductCreateRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ public class ProductController {
      * @return '제품 등록'
      */
     @PostMapping("/api/v1/products")
-    public String post(@RequestBody ProductCreateRequest request) {
+    public String post(@RequestBody @Valid ProductCreateRequest request) {
         log.info("request = {}", request.toString());
         return "제품 등록";
     }
