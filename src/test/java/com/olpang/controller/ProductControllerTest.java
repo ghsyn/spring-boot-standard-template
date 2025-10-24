@@ -93,6 +93,28 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("제품 단건 조회")
+    void getDetailsTest() throws Exception {
+        // given
+        Product product = Product.builder()
+                .name("foo")
+                .brand("bar")
+                .description("baz")
+                .build();
+
+        productRepository.save(product);
+
+        // expected (when + then)
+        mockMvc.perform(get("/api/v1/products/{productId}", product.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(product.getId()))
+                .andExpect(jsonPath("$.name").value("foo"))
+                .andExpect(jsonPath("$.brand").value("bar"))
+                .andExpect(jsonPath("$.description").value("baz"))
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("GET /api/v1/products 요청 시 '제품 목록 조회' 문자열을 출력한다.")
     void getListTest() throws Exception {
         // expected
