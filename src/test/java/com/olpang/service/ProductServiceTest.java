@@ -3,6 +3,7 @@ package com.olpang.service;
 import com.olpang.domain.Product;
 import com.olpang.repository.ProductRepository;
 import com.olpang.request.ProductCreateRequest;
+import com.olpang.response.ProductDetailsResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,4 +47,26 @@ class ProductServiceTest {
         assertEquals("제품에 대한 설명입니다.", product.getDescription());
     }
 
+    @Test
+    @DisplayName("제품 단건 조회")
+    void getDetailsTest() {
+        // given
+        Product requstProduct = Product.builder()
+                .name("foo")
+                .brand("bar")
+                .description("baz")
+                .build();
+
+        productRepository.save(requstProduct);
+
+        // when
+        ProductDetailsResponse response = productService.getDetails(requstProduct.getId());
+
+        // then
+        assertNotNull(response);
+        assertEquals(1L, productRepository.count());
+        assertEquals("foo", response.getName());
+        assertEquals("bar", response.getBrand());
+        assertEquals("baz", response.getDescription());
+    }
 }
