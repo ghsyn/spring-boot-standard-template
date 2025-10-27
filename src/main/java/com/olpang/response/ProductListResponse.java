@@ -19,11 +19,13 @@ public class ProductListResponse {
     private final String brand;
     private final String description;
 
-    public ProductListResponse(Product product) {
-        this.id = product.getId();
-        this.name = product.getName();
-        this.brand = product.getBrand();
-        this.description = product.getDescription();
+    public static ProductListResponse of(Product product) {
+        return ProductListResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .brand(product.getBrand())
+                .description(product.getDescription())
+                .build();
     }
 
     /**

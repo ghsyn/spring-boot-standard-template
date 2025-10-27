@@ -1,6 +1,5 @@
 package com.olpang.response;
 
-import com.olpang.domain.Product;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -19,13 +18,6 @@ public class ProductDetailsResponse {
     private final String name;
     private final String brand;
     private final String description;
-
-    public ProductDetailsResponse(Product product) {
-        this.id = product.getId();
-        this.name = product.getName();
-        this.brand = product.getBrand();
-        this.description = product.getDescription();
-    }
 
     @Builder
     public ProductDetailsResponse(Long id, String name, String brand, String description) {
