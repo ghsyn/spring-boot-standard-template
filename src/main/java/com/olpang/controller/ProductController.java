@@ -2,11 +2,14 @@ package com.olpang.controller;
 
 import com.olpang.request.ProductCreateRequest;
 import com.olpang.response.ProductDetailsResponse;
+import com.olpang.response.ProductListResponse;
 import com.olpang.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -27,7 +30,7 @@ public class ProductController {
     /**
      * 제품 단건 조회
      * @param productId 제품 고유 ID
-     * @return {@link ProductDetailsResponse} 제품 상세 정보 응답 DTO
+     * @return {@link ProductDetailsResponse} 제품 상세 응답 DTO
      */
     @GetMapping("/api/v1/products/{productId}")
     public ProductDetailsResponse getDetails(@PathVariable Long productId) {
@@ -35,11 +38,11 @@ public class ProductController {
     }
 
     /**
-     * 제품 목록 조회
-     * @return '제품 목록 조회'
+     * 제품 목록 조회(검색 쿼리, 페이징, 정렬: price, popularity)
+     * @return {@link ProductListResponse} 제품 목록 응답 DTO 리스트
      */
     @GetMapping("/api/v1/products")
-    public String getList() {
-        return "제품 목록 조회";
+    public List<ProductListResponse> getList() {
+        return productService.getList();
     }
 }
