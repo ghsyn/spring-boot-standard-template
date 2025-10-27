@@ -12,13 +12,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc   // mockMvc 사용하기 위해 @WebMvcTest에서 가져옴
 @SpringBootTest // service, repository 사용 -> 통합 테스트로 변경
@@ -115,12 +116,35 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/products 요청 시 '제품 목록 조회' 문자열을 출력한다.")
-    void getListTest() throws Exception {
+    @DisplayName("제품 목록 조회 - 조회한 목록과 제품명/제품설명 문자열의 길이 제한을 검증한다.")
+    void getListFieldLengthTest() throws Exception {
+
+        // given
+        Product longProduct1 = Product.builder()
+                .name("매우 길게 만든 제품명1, 10자 이상 문자열 길이 테스트용")    // 10자 이상
+                .brand("제조사")
+                .description("아주아주아주 길게 만든 제품 설명1, 50자 이상 데이터 부분 문자열로 가져오는지 테스트용입니다.")   // 50자 이상
+                .build();
+
+        productRepository.save(longProduct1);
+
+        Product longProduct2 = Product.builder()
+                .name("매우 길게 만든 제품명2, 10자 이상 문자열 길이 테스트용")    // 10자 이상
+                .brand("제조사")
+                .description("아주아주아주 길게 만든 제품 설명2, 50자 이상 데이터 부분 문자열로 가져오는지 테스트용입니다.")   // 50자 이상
+                .build();
+
+        productRepository.save(longProduct2);
+
         // expected
         mockMvc.perform(get("/api/v1/products"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("제품 목록 조회"))
+                .andExpect(jsonPath("$.length()", is(2)))
+                .andExpect(jsonPath("$[0].id").value(longProduct1.getId()))
+                .andExpect(jsonPath("$[1].id").value(longProduct2.getId()))
+                .andExpect(jsonPath("$[0].name").value("매우 길게 만든 제"))
+                .andExpect(jsonPath("$[0].brand").value("제조사"))
+                .andExpect(jsonPath("$[0].description").value("아주아주아주 길게 만든 제품 설명1, 50자 이상 데이터 부분 문자열로 가져오는지 테스트용"))
                 .andDo(print());
     }
 }
