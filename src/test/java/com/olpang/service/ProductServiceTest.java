@@ -4,13 +4,18 @@ import com.olpang.domain.Product;
 import com.olpang.repository.ProductRepository;
 import com.olpang.request.ProductCreateRequest;
 import com.olpang.response.ProductDetailsResponse;
+import com.olpang.response.ProductListResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
 class ProductServiceTest {
 
@@ -68,5 +73,28 @@ class ProductServiceTest {
         assertEquals("foo", response.getName());
         assertEquals("bar", response.getBrand());
         assertEquals("baz", response.getDescription());
+    }
+
+    @Test
+    @DisplayName("제품 목록 조회")
+    void getListTest() {
+        // given
+        List<Product> requestProduct = IntStream.range(1, 31)
+                .mapToObj(i -> Product.builder()
+                        .name("제품명 " + i)
+                        .brand("제조사 " + i)
+                        .description("제품 설명 " + i)
+                        .build())
+                .toList();
+
+        productRepository.saveAll(requestProduct);
+
+        // when
+        List<ProductListResponse> products = productService.getList();
+
+        // then
+        assertEquals(30L, products.size());
+        assertEquals("제품명 1", products.get(0).getName());
+        assertEquals("제품명 30", products.get(requestProduct.size() - 1).getName());
     }
 }
