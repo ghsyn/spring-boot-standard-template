@@ -7,6 +7,7 @@ import com.olpang.response.ProductDetailsResponse;
 import com.olpang.response.ProductListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,9 +42,8 @@ public class ProductService {
                 .build();
     }
 
-    public List<ProductListResponse> getList() {
-        // TODO: pageination 처리
-        return productRepository.findAll().stream()
+    public List<ProductListResponse> getList(Pageable pageable) {
+        return productRepository.findAll(pageable).stream()
                 .map(ProductListResponse::of)
                 .toList();
     }
