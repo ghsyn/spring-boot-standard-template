@@ -10,11 +10,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @SpringBootTest
 class ProductServiceTest {
@@ -76,7 +79,7 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("제품 목록 조회")
+    @DisplayName("제품 목록 1페이지 조회")
     void getListTest() {
         // given
         List<Product> requestProduct = IntStream.range(1, 31)
@@ -89,12 +92,14 @@ class ProductServiceTest {
 
         productRepository.saveAll(requestProduct);
 
+        Pageable pageable = PageRequest.of(0, 5, DESC, "id");
+
         // when
-        List<ProductListResponse> products = productService.getList();
+        List<ProductListResponse> products = productService.getList(pageable);
 
         // then
-        assertEquals(30L, products.size());
-        assertEquals("제품명 1", products.get(0).getName());
-        assertEquals("제품명 30", products.get(requestProduct.size() - 1).getName());
+        assertEquals(5L, products.size());
+        assertEquals("제품명 30", products.get(0).getName());
+        assertEquals("제품명 26", products.get(4).getName());
     }
 }

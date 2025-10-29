@@ -12,6 +12,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -147,4 +150,29 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$[0].description").value("아주아주아주 길게 만든 제품 설명1, 50자 이상 데이터 부분 문자열로 가져오는지 테스트용"))
                 .andDo(print());
     }
+
+    @Test
+    @DisplayName("제품 목록 조회 - 제품 1페이지 조회 및 id 내림차순 정렬")
+    void getListPageableTest() throws Exception {
+        // given
+        List<Product> requestProduct = IntStream.range(1, 31)
+                .mapToObj(i -> Product.builder()
+                        .name("제품명 " + i)
+                        .brand("제조사 " + i)
+                        .description("제품 설명 " + i)
+                        .build())
+                .toList();
+        productRepository.saveAll(requestProduct);
+
+        // when & then
+        mockMvc.perform(get("/api/v1/products?page=1&sort=id,desc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(5)))
+                .andExpect(jsonPath("$[0].id").value(30))
+                .andExpect(jsonPath("$[0].name").value("제품명 30"))
+                .andExpect(jsonPath("$[0].brand").value("제조사 30"))
+                .andExpect(jsonPath("$[0].description").value("제품 설명 30"))
+                .andDo(print());
+    }
+
 }
