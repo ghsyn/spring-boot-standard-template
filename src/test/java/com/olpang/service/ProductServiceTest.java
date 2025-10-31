@@ -3,6 +3,7 @@ package com.olpang.service;
 import com.olpang.domain.Product;
 import com.olpang.repository.ProductRepository;
 import com.olpang.request.ProductCreateRequest;
+import com.olpang.request.ProductPageRequest;
 import com.olpang.response.ProductDetailsResponse;
 import com.olpang.response.ProductListResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,14 +11,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.data.domain.Sort.Direction.DESC;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 class ProductServiceTest {
@@ -92,14 +91,14 @@ class ProductServiceTest {
 
         productRepository.saveAll(requestProduct);
 
-        Pageable pageable = PageRequest.of(0, 5, DESC, "id");
+        ProductPageRequest productPageRequest = ProductPageRequest.builder().build();
 
         // when
-        List<ProductListResponse> products = productService.getList(pageable);
+        List<ProductListResponse> products = productService.getList(productPageRequest);
 
         // then
-        assertEquals(5L, products.size());
+        assertEquals(10L, products.size());
         assertEquals("제품명 30", products.get(0).getName());
-        assertEquals("제품명 26", products.get(4).getName());
+        assertEquals("제품명 21", products.get(9).getName());
     }
 }
