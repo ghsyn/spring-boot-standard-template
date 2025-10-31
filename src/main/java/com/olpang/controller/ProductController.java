@@ -1,13 +1,13 @@
 package com.olpang.controller;
 
 import com.olpang.request.ProductCreateRequest;
+import com.olpang.request.ProductPageRequest;
 import com.olpang.response.ProductDetailsResponse;
 import com.olpang.response.ProductListResponse;
 import com.olpang.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public class ProductController {
      * @return {@link ProductListResponse} 제품 목록 응답 DTO 리스트
      */
     @GetMapping("/api/v1/products")
-    public List<ProductListResponse> getList(Pageable pageable) {
-        return productService.getList(pageable);
+    public List<ProductListResponse> getList(@ModelAttribute ProductPageRequest productPageRequest) {
+        return productService.getList(productPageRequest);
     }
 }
