@@ -149,20 +149,20 @@ class ProductControllerTest {
         productRepository.save(longProduct2);
 
         // expected
-        mockMvc.perform(get("/api/v1/products"))
+        mockMvc.perform(get("/api/v1/products?page=1&size=10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", is(2)))
-                .andExpect(jsonPath("$[0].id").value(longProduct1.getId()))
-                .andExpect(jsonPath("$[1].id").value(longProduct2.getId()))
-                .andExpect(jsonPath("$[0].name").value("매우 길게 만든 제"))
-                .andExpect(jsonPath("$[0].brand").value("제조사"))
-                .andExpect(jsonPath("$[0].description").value("아주아주아주 길게 만든 제품 설명1, 50자 이상 데이터 부분 문자열로 가져오는지 테스트용"))
+                .andExpect(jsonPath("$[1].id").value(longProduct1.getId()))
+                .andExpect(jsonPath("$[0].id").value(longProduct2.getId()))
+                .andExpect(jsonPath("$[1].name").value("매우 길게 만든 제"))
+                .andExpect(jsonPath("$[1].brand").value("제조사"))
+                .andExpect(jsonPath("$[1].description").value("아주아주아주 길게 만든 제품 설명1, 50자 이상 데이터 부분 문자열로 가져오는지 테스트용"))
                 .andDo(print());
     }
 
     @Test
     @DisplayName("제품 목록 조회 - 제품 1페이지 조회 및 id 내림차순 정렬")
-    void getListPageableTest() throws Exception {
+    void getListWithPaginationTest() throws Exception {
         // given
         List<Product> requestProduct = IntStream.range(1, 31)
                 .mapToObj(i -> Product.builder()
@@ -174,9 +174,33 @@ class ProductControllerTest {
         productRepository.saveAll(requestProduct);
 
         // when & then
-        mockMvc.perform(get("/api/v1/products?page=1&sort=id,desc"))
+        mockMvc.perform(get("/api/v1/products?page=1&size=10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", is(5)))
+                .andExpect(jsonPath("$.length()", is(10)))
+                .andExpect(jsonPath("$[0].id").value(30))
+                .andExpect(jsonPath("$[0].name").value("제품명 30"))
+                .andExpect(jsonPath("$[0].brand").value("제조사 30"))
+                .andExpect(jsonPath("$[0].description").value("제품 설명 30"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("제품 목록 조회 - 페이지를 0으로 요청하면 첫 페이지를 가져온다.")
+    void getPage0Test() throws Exception {
+        // given
+        List<Product> requestProduct = IntStream.range(1, 31)
+                .mapToObj(i -> Product.builder()
+                        .name("제품명 " + i)
+                        .brand("제조사 " + i)
+                        .description("제품 설명 " + i)
+                        .build())
+                .toList();
+        productRepository.saveAll(requestProduct);
+
+        // when & then
+        mockMvc.perform(get("/api/v1/products?page=0&size=10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(10)))
                 .andExpect(jsonPath("$[0].id").value(30))
                 .andExpect(jsonPath("$[0].name").value("제품명 30"))
                 .andExpect(jsonPath("$[0].brand").value("제조사 30"))
