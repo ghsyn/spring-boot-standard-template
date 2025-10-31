@@ -3,11 +3,11 @@ package com.olpang.service;
 import com.olpang.domain.Product;
 import com.olpang.repository.ProductRepository;
 import com.olpang.request.ProductCreateRequest;
+import com.olpang.request.ProductPageRequest;
 import com.olpang.response.ProductDetailsResponse;
 import com.olpang.response.ProductListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,8 +42,8 @@ public class ProductService {
                 .build();
     }
 
-    public List<ProductListResponse> getList(Pageable pageable) {
-        return productRepository.findAll(pageable).stream()
+    public List<ProductListResponse> getList(ProductPageRequest productPageRequest) {
+        return productRepository.getList(productPageRequest).stream()
                 .map(ProductListResponse::of)
                 .toList();
     }
