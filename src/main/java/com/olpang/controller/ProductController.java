@@ -1,6 +1,7 @@
 package com.olpang.controller;
 
 import com.olpang.request.ProductCreateRequest;
+import com.olpang.request.ProductEditRequest;
 import com.olpang.request.ProductPageRequest;
 import com.olpang.response.ProductDetailsResponse;
 import com.olpang.response.ProductListResponse;
@@ -43,7 +44,12 @@ public class ProductController {
      * @return {@link ProductListResponse} 제품 목록 응답 DTO 리스트
      */
     @GetMapping("/api/v1/products")
-    public List<ProductListResponse> getList(@ModelAttribute ProductPageRequest productPageRequest) {
-        return productService.getList(productPageRequest);
+    public List<ProductListResponse> getList(@ModelAttribute ProductPageRequest request) {
+        return productService.getList(request);
+    }
+
+    @PatchMapping("/api/v1/products/{productId}")
+    public void edit(@PathVariable Long productId, @RequestBody @Valid ProductEditRequest request) {
+        productService.edit(productId, request);
     }
 }
