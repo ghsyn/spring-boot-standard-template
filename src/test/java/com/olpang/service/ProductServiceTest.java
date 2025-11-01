@@ -115,9 +115,11 @@ class ProductServiceTest {
 
         productRepository.save(product);
 
-        // 수정한 데이터만 전달
+        // 수정 여부에 상관없이 모든 필드 데이터 전달
         ProductEditRequest productEditRequest = ProductEditRequest.builder()
                 .name("new foo")
+                .brand("bar")
+                .description("baz")
                 .build();
 
         // when
