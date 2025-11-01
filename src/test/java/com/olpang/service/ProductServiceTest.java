@@ -3,6 +3,7 @@ package com.olpang.service;
 import com.olpang.domain.Product;
 import com.olpang.repository.ProductRepository;
 import com.olpang.request.ProductCreateRequest;
+import com.olpang.request.ProductEditRequest;
 import com.olpang.request.ProductPageRequest;
 import com.olpang.response.ProductDetailsResponse;
 import com.olpang.response.ProductListResponse;
@@ -100,5 +101,33 @@ class ProductServiceTest {
         assertEquals(10L, products.size());
         assertEquals("제품명 30", products.get(0).getName());
         assertEquals("제품명 21", products.get(9).getName());
+    }
+
+    @Test
+    @DisplayName("제품명 수정")
+    void editProductNameTest() {
+        // given
+        Product product = Product.builder()
+                .name("foo")
+                .brand("bar")
+                .description("baz")
+                .build();
+
+        productRepository.save(product);
+
+        // 수정한 데이터만 전달
+        ProductEditRequest productEditRequest = ProductEditRequest.builder()
+                .name("new foo")
+                .build();
+
+        // when
+        productService.edit(product.getId(), productEditRequest);
+
+        // then
+        Product changedProduct = productRepository.findById(product.getId())
+                .orElseThrow(() -> new RuntimeException("제품이 존재하지 않습니다. id = " + product.getId()));
+        assertEquals("new foo", changedProduct.getName());
+        assertEquals("bar", changedProduct.getBrand());
+        assertEquals("baz", changedProduct.getDescription());
     }
 }
