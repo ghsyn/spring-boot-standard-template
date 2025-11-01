@@ -59,17 +59,12 @@ public class ProductService {
 
         ProductEditor.ProductEditorBuilder editorBuilder = product.toEditor();
 
-        // 수정할 필드에 대해서만 builder 업데이트
-        if (productEditRequest.getName() != null) {
-            editorBuilder.name(productEditRequest.getName());
-        }
-        if (productEditRequest.getBrand() != null) {
-            editorBuilder.brand(productEditRequest.getBrand());
-        }
-        if (productEditRequest.getDescription() != null) {
-            editorBuilder.description(productEditRequest.getDescription());
-        }
+        ProductEditor productEditor = editorBuilder
+                .name(productEditRequest.getName())
+                .brand(productEditRequest.getBrand())
+                .description(productEditRequest.getDescription())
+                .build();
 
-        product.edit(editorBuilder.build());
+        product.edit(productEditor);
     }
 }
