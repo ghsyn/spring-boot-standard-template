@@ -115,7 +115,6 @@ class ProductServiceTest {
 
         productRepository.save(product);
 
-        // 수정 여부에 상관없이 모든 필드 데이터 전달
         ProductEditRequest productEditRequest = ProductEditRequest.builder()
                 .name("new foo")
                 .brand("bar")
@@ -131,5 +130,34 @@ class ProductServiceTest {
         assertEquals("new foo", changedProduct.getName());
         assertEquals("bar", changedProduct.getBrand());
         assertEquals("baz", changedProduct.getDescription());
+    }
+
+    @Test
+    @DisplayName("제조사 및 제품 설명 수정")
+    void editProductBrandAndDescriptionTest() {
+        // given
+        Product product = Product.builder()
+                .name("foo")
+                .brand("bar")
+                .description("baz")
+                .build();
+
+        productRepository.save(product);
+
+        ProductEditRequest productEditRequest = ProductEditRequest.builder()
+                .name("foo")
+                .brand("new bar")
+                .description("new baz")
+                .build();
+
+        // when
+        productService.edit(product.getId(), productEditRequest);
+
+        // then
+        Product changedProduct = productRepository.findById(product.getId())
+                .orElseThrow(() -> new RuntimeException("제품이 존재하지 않습니다. id = " + product.getId()));
+        assertEquals("foo", changedProduct.getName());
+        assertEquals("new bar", changedProduct.getBrand());
+        assertEquals("new baz", changedProduct.getDescription());
     }
 }
