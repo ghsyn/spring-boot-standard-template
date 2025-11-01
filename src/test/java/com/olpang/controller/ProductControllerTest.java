@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.olpang.domain.Product;
 import com.olpang.repository.ProductRepository;
 import com.olpang.request.ProductCreateRequest;
+import com.olpang.request.ProductEditRequest;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,8 +21,7 @@ import java.util.stream.IntStream;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -173,7 +173,7 @@ class ProductControllerTest {
                 .toList();
         productRepository.saveAll(requestProduct);
 
-        // when & then
+        // expected
         mockMvc.perform(get("/api/v1/products?page=1&size=10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", is(10)))
@@ -197,7 +197,7 @@ class ProductControllerTest {
                 .toList();
         productRepository.saveAll(requestProduct);
 
-        // when & then
+        // expected
         mockMvc.perform(get("/api/v1/products?page=0&size=10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", is(10)))
@@ -208,4 +208,29 @@ class ProductControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("제품 정보 수정")
+    void editProductTest() throws Exception {
+        // given
+        Product product = Product.builder()
+                .name("foo")
+                .brand("bar")
+                .description("baz")
+                .build();
+
+        productRepository.save(product);
+
+        ProductEditRequest request = ProductEditRequest.builder()
+                .name("new foo")
+                .brand("bar")
+                .description("baz")
+                .build();
+
+        // expected
+        mockMvc.perform(patch("/api/v1/products/{productId}", product.getId())
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
 }
