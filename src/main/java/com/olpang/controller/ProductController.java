@@ -52,4 +52,9 @@ public class ProductController {
     public void edit(@PathVariable Long productId, @RequestBody @Valid ProductEditRequest request) {
         productService.edit(productId, request);
     }
+
+    @DeleteMapping("/api/v1/products/{productId}")
+    public void delete(@PathVariable Long productId) {
+        productService.delete(productId);
+    }
 }
