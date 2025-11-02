@@ -67,4 +67,12 @@ public class ProductService {
 
         product.edit(productEditor);
     }
+
+    public void delete(Long id) {
+        Product product = productRepository.findById(id)
+                // TODO: ID 값 없다면 제품 등록 전이라는 적절한 exception 만들기
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 제품입니다."));
+
+        productRepository.delete(product);
+    }
 }
