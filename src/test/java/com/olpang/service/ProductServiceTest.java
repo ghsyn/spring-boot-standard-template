@@ -160,4 +160,23 @@ class ProductServiceTest {
         assertEquals("new bar", changedProduct.getBrand());
         assertEquals("new baz", changedProduct.getDescription());
     }
+
+    @Test
+    @DisplayName("제품 삭제")
+    void deleteProductTest() {
+        // given
+        Product product = Product.builder()
+                .name("foo")
+                .brand("bar")
+                .description("baz")
+                .build();
+
+        productRepository.save(product);
+
+        // when
+        productService.delete(product.getId());
+
+        //then
+        assertEquals(0, productRepository.count());
+    }
 }
