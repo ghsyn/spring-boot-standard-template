@@ -233,4 +233,23 @@ class ProductControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
     }
+
+    @Test
+    @DisplayName("제품 삭제")
+    void deleteProductTest() throws Exception {
+        // given
+        Product product = Product.builder()
+                .name("foo")
+                .brand("bar")
+                .description("baz")
+                .build();
+
+        productRepository.save(product);
+
+        // expected
+        mockMvc.perform(delete("/api/v1/products/{productId}", product.getId())
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
 }
