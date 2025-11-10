@@ -1,6 +1,7 @@
 package com.olpang.service;
 
 import com.olpang.domain.Product;
+import com.olpang.exception.ProductNotFoundException;
 import com.olpang.repository.ProductRepository;
 import com.olpang.request.ProductCreateRequest;
 import com.olpang.request.ProductEditRequest;
@@ -16,8 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ProductServiceTest {
@@ -59,16 +59,16 @@ class ProductServiceTest {
     @DisplayName("제품 단건 조회")
     void getDetailsTest() {
         // given
-        Product requstProduct = Product.builder()
+        Product product = Product.builder()
                 .name("foo")
                 .brand("bar")
                 .description("baz")
                 .build();
 
-        productRepository.save(requstProduct);
+        productRepository.save(product);
 
         // when
-        ProductDetailsResponse response = productService.getDetails(requstProduct.getId());
+        ProductDetailsResponse response = productService.getDetails(product.getId());
 
         // then
         assertNotNull(response);
@@ -79,10 +79,28 @@ class ProductServiceTest {
     }
 
     @Test
+    @DisplayName("[실패케이스] 존재하지 않는 제품 단건 조회")
+    void getDetailsNotFoundTest() {
+        // given
+        Product product = Product.builder()
+                .name("foo")
+                .brand("bar")
+                .description("baz")
+                .build();
+
+        productRepository.save(product);
+
+        // expected
+        assertThrows(ProductNotFoundException.class, () -> {
+            productService.getDetails(product.getId() + 1L);
+        });
+    }
+
+    @Test
     @DisplayName("제품 목록 1페이지 조회")
     void getListTest() {
         // given
-        List<Product> requestProduct = IntStream.range(1, 31)
+        List<Product> products = IntStream.range(1, 31)
                 .mapToObj(i -> Product.builder()
                         .name("제품명 " + i)
                         .brand("제조사 " + i)
@@ -90,17 +108,17 @@ class ProductServiceTest {
                         .build())
                 .toList();
 
-        productRepository.saveAll(requestProduct);
+        productRepository.saveAll(products);
 
         ProductPageRequest productPageRequest = ProductPageRequest.builder().build();
 
         // when
-        List<ProductListResponse> products = productService.getList(productPageRequest);
+        List<ProductListResponse> productResponse = productService.getList(productPageRequest);
 
         // then
-        assertEquals(10L, products.size());
-        assertEquals("제품명 30", products.get(0).getName());
-        assertEquals("제품명 21", products.get(9).getName());
+        assertEquals(10L, productResponse.size());
+        assertEquals("제품명 30", productResponse.get(0).getName());
+        assertEquals("제품명 21", productResponse.get(9).getName());
     }
 
     @Test
@@ -162,6 +180,30 @@ class ProductServiceTest {
     }
 
     @Test
+    @DisplayName("[실패케이스] 존재하지 않는 제품 수정")
+    void editProductNotFoundTest() {
+        // given
+        Product product = Product.builder()
+                .name("foo")
+                .brand("bar")
+                .description("baz")
+                .build();
+
+        productRepository.save(product);
+
+        ProductEditRequest productEditRequest = ProductEditRequest.builder()
+                .name("new foo")
+                .brand("bar")
+                .description("baz")
+                .build();
+
+        // expected
+        assertThrows(ProductNotFoundException.class, () -> {
+            productService.edit(product.getId() + 1L, productEditRequest);
+        });
+    }
+
+    @Test
     @DisplayName("제품 삭제")
     void deleteProductTest() {
         // given
@@ -178,5 +220,23 @@ class ProductServiceTest {
 
         //then
         assertEquals(0, productRepository.count());
+    }
+
+    @Test
+    @DisplayName("[실패케이스] 존재하지 않는 제품 삭제")
+    void deleteProductNotFoundTest() {
+        // given
+        Product product = Product.builder()
+                .name("foo")
+                .brand("bar")
+                .description("baz")
+                .build();
+
+        productRepository.save(product);
+
+        // expected
+        assertThrows(ProductNotFoundException.class, () -> {
+            productService.delete(product.getId() + 1L);
+        });
     }
 }
