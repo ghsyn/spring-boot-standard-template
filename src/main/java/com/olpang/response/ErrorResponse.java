@@ -25,12 +25,13 @@ public class ErrorResponse {
 
     private final String code;
     private final String message;
-    private final Map<String, Object> validation = new HashMap<>();
+    private final Map<String, String> validation;
 
     @Builder
-    public ErrorResponse(String code, String message) {
+    public ErrorResponse(String code, String message, Map<String, String> validation) {
         this.code = code;
         this.message = message;
+        this.validation = validation;
     }
 
     /**
