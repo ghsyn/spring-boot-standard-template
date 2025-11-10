@@ -1,9 +1,12 @@
 package com.olpang.request;
 
+import com.olpang.exception.InvalidRequestException;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,5 +26,11 @@ public class ProductCreateRequest {
         this.name = name;
         this.brand = brand;
         this.description = description;
+    }
+
+    public void doValidate() {
+        if (description.matches(".*<script>.*</script>.*")) {
+            throw new InvalidRequestException("description", "제품 정보에 스크립트 태그를 사용할 수 없습니다.");
+        }
     }
 }
