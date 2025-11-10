@@ -103,6 +103,26 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("[실패케이스] 유효하지 않은 제품 정보 등록")
+    void postInvalidRequestTest() throws Exception {
+        // given
+        ProductCreateRequest request = ProductCreateRequest.builder()
+                .name("제품명")
+                .brand("제조사")
+                .description("<script>alert('xss')</script>")
+                .build();
+
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // expected
+        mockMvc.perform(post("/api/v1/products")
+                        .contentType(APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("제품 단건 조회")
     void getDetailsTest() throws Exception {
         // given
