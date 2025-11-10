@@ -1,5 +1,6 @@
 package com.olpang.advice;
 
+import com.olpang.exception.InvalidRequestException;
 import com.olpang.exception.ProductNotFoundException;
 import com.olpang.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -61,6 +62,28 @@ public class CommonControllerAdvice {
 
         ErrorResponse response = ErrorResponse.builder()
                 .code("404")
+                .message(e.getMessage())
+                .build();
+
+        return response;
+    }
+
+    /**
+     * {@link InvalidRequestException} 예외 처리 핸들러.
+     *
+     * 존재하지 않는 제품 접근 시 발생하는 예외를 처리하여
+     * HTTP 404 응답과 함께 표준화된 에러 응답 객체를 반환
+     *
+     * @param e 발생한 ProductNotFoundException 예외
+     * @return ErrorResponse 객체
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidRequestException.class)
+    @ResponseBody
+    public ErrorResponse invalidRequestHandler(InvalidRequestException e) {
+
+        ErrorResponse response = ErrorResponse.builder()
+                .code("400")
                 .message(e.getMessage())
                 .build();
 
