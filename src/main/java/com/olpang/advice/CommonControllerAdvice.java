@@ -1,7 +1,9 @@
 package com.olpang.advice;
 
+import com.olpang.exception.CommonException;
 import com.olpang.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -42,5 +44,20 @@ public class CommonControllerAdvice {
         }
 
         return response;
+    }
+
+    @ExceptionHandler(CommonException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorResponse> commonHandler(CommonException e) {
+        int statusCode = e.getStatusCode();
+
+        ErrorResponse responseBody = ErrorResponse.builder()
+                .code(String.valueOf(statusCode))
+                .message(e.getMessage())
+                .validation(e.getValidation())
+                .build();
+
+        return ResponseEntity.status(statusCode)
+                .body(responseBody);
     }
 }

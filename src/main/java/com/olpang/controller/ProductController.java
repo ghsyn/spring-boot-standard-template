@@ -26,6 +26,7 @@ public class ProductController {
      */
     @PostMapping("/api/v1/products")
     public void post(@RequestBody @Valid ProductCreateRequest request) {
+        request.doValidate();
         productService.register(request);
     }
 

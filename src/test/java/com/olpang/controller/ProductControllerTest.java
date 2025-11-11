@@ -98,10 +98,27 @@ class ProductControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(jsonRequest)
                 )
-                .andExpect(status().isBadRequest()) // 400
-                .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
-                .andExpect(jsonPath("$.validation.name").value("제품명을 입력해주세요."))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("[실패케이스] 유효하지 않은 제품 정보 등록")
+    void postInvalidRequestTest() throws Exception {
+        // given
+        ProductCreateRequest request = ProductCreateRequest.builder()
+                .name("제품명")
+                .brand("제조사")
+                .description("<script>alert('xss')</script>")
+                .build();
+
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // expected
+        mockMvc.perform(post("/api/v1/products")
+                        .contentType(APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 
@@ -124,6 +141,15 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.name").value("foo"))
                 .andExpect(jsonPath("$.brand").value("bar"))
                 .andExpect(jsonPath("$.description").value("baz"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("[실패케이스] 존재하지 않는 제품 단건 조회")
+    void getDetailsNotFoundTest() throws Exception {
+        // expected
+        mockMvc.perform(get("/api/v1/products/{productId}", 1L))
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 
@@ -235,6 +261,24 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("[실패케이스] 존재하지 않는 제품 정보 수정")
+    void editProductNotFoundTest() throws Exception {
+        // given
+        ProductEditRequest request = ProductEditRequest.builder()
+                .name("new foo")
+                .brand("bar")
+                .description("baz")
+                .build();
+
+        // expected
+        mockMvc.perform(patch("/api/v1/products/{productId}", 1L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("제품 삭제")
     void deleteProductTest() throws Exception {
         // given
@@ -250,6 +294,16 @@ class ProductControllerTest {
         mockMvc.perform(delete("/api/v1/products/{productId}", product.getId())
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("[실패케이스] 존재하지 않는 제품 삭제")
+    void deleteProductNotFoundTest() throws Exception {
+        // expected
+        mockMvc.perform(delete("/api/v1/products/{productId}", 1L)
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 }

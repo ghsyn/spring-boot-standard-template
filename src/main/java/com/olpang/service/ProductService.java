@@ -2,6 +2,7 @@ package com.olpang.service;
 
 import com.olpang.domain.Product;
 import com.olpang.domain.ProductEditor;
+import com.olpang.exception.ProductNotFoundException;
 import com.olpang.repository.ProductRepository;
 import com.olpang.request.ProductCreateRequest;
 import com.olpang.request.ProductEditRequest;
@@ -34,8 +35,7 @@ public class ProductService {
 
     public ProductDetailsResponse getDetails(Long id) {
         Product product = productRepository.findById(id)
-                // TODO: ID 값 없다면 제품 등록 전이라는 적절한 exception 만들기
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 제품입니다."));
+                .orElseThrow(ProductNotFoundException::new);
 
         return ProductDetailsResponse.builder()
                 .id(product.getId())
@@ -54,8 +54,7 @@ public class ProductService {
     @Transactional
     public void edit(Long id, ProductEditRequest productEditRequest) {
         Product product = productRepository.findById(id)
-                // TODO: ID 값 없다면 제품 등록 전이라는 적절한 exception 만들기
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 제품입니다."));
+                .orElseThrow(ProductNotFoundException::new);
 
         ProductEditor.ProductEditorBuilder editorBuilder = product.toEditor();
 
@@ -70,8 +69,7 @@ public class ProductService {
 
     public void delete(Long id) {
         Product product = productRepository.findById(id)
-                // TODO: ID 값 없다면 제품 등록 전이라는 적절한 exception 만들기
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 제품입니다."));
+                .orElseThrow(ProductNotFoundException::new);
 
         productRepository.delete(product);
     }
