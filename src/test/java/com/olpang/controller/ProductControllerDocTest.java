@@ -21,6 +21,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -90,9 +91,10 @@ public class ProductControllerDocTest {
                 .andExpect(status().isOk())
                 .andDo(document("product-create",
                         requestFields(
-                                PayloadDocumentation.fieldWithPath("name").description("제품명"),
+                                PayloadDocumentation.fieldWithPath("name").description("제품명")
+                                        .attributes(key("constraints").value("정확한 제품명을 입력해주세요.")),
                                 PayloadDocumentation.fieldWithPath("brand").description("제조사"),
-                                PayloadDocumentation.fieldWithPath("description").description("제품 설명")
+                                PayloadDocumentation.fieldWithPath("description").description("제품 설명").optional()
                         )
                 ));
     }

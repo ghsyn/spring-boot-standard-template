@@ -1,5 +1,9 @@
 = Olpang API
-:toc:
+:icons: front
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
 
 == 제품 단건 조회
 
