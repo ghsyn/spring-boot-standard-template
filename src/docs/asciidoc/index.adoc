@@ -4,10 +4,36 @@
 == 제품 단건 조회
 
 === 요청
-include::{snippets}/index/http-request.adoc[]
+http-request
+include::{snippets}/product-inquiry/http-request.adoc[]
+
+path-parameters
+include::{snippets}/product-inquiry/path-parameters.adoc[]
 
 === 응답
-include::{snippets}/index/http-response.adoc[]
+http-response
+include::{snippets}/product-inquiry/http-response.adoc[]
+
+response-fields
+include::{snippets}/product-inquiry/response-fields.adoc[]
 
 === CURL
-include::{snippets}/index/curl-request.adoc[]
+include::{snippets}/product-inquiry/curl-request.adoc[]
+
+
+== 제품 등록
+
+=== 요청
+http-request
+include::{snippets}/product-create/http-request.adoc[]
+
+request-fields
+include::{snippets}/product-create/request-fields.adoc[]
+
+=== 응답
+http-response
+include::{snippets}/product-create/http-response.adoc[]
+
+=== CURL
+include::{snippets}/product-create/curl-request.adoc[]
+
