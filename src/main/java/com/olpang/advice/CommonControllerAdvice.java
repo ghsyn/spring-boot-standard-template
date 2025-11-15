@@ -12,27 +12,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * 공통 예외 처리 advice 클래스.
- *
- * 컨트롤러 계층에서 발생하는 예외 처리를 전역적으로 처리,
- * 다양한 예외에 대한 표준 에러 응답을 생성
+ * 컨트롤러 전역 예외 처리
  */
 @ControllerAdvice
 public class CommonControllerAdvice {
 
     /**
-     * {@link MethodArgumentNotValidException} 예외 처리 핸들러.
-     *
-     * 유효성 검증(@Valid) 실패 시 발생하는 예외를 처리하여
-     * HTTP 400 응답과 함께 표준화된 에러 응답 객체를 반환
-     *
-     * @param e 발생한 MethodArgumentNotValidException 예외
-     * @return ErrorResponse 객체
+     * 유효성 검증(@Valid) 실패 처리
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
-    public ErrorResponse invalidRequestHandler(MethodArgumentNotValidException e) {
+    public ErrorResponse validationFailedHandler(MethodArgumentNotValidException e) {
 
         ErrorResponse response = ErrorResponse.builder()
                 .code("400")
@@ -46,6 +37,9 @@ public class CommonControllerAdvice {
         return response;
     }
 
+    /**
+     * 비즈니스 예외 처리
+     */
     @ExceptionHandler(CommonException.class)
     @ResponseBody
     public ResponseEntity<ErrorResponse> commonHandler(CommonException e) {

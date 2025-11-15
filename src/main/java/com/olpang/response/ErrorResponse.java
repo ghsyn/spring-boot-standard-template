@@ -3,15 +3,12 @@ package com.olpang.response;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
- * API 에러 응답 DTO 클래스.
+ * API 에러 응답 DTO
  *
- * 요청 처리 중 발생한 예외를 클라이언트에 일관된 형태로 전달하기 위한 응답 객체
- *
- * 구조 예시)
+ * 예시:
  * {
  *   "code": "400",
  *   "message": "잘못된 요청입니다.",
@@ -35,12 +32,12 @@ public class ErrorResponse {
     }
 
     /**
-     * 유효성 검증 오류 필드명 및 메시지를 validation 맵에 추가
+     * 유효성 검증(@Valid) 실패 필드 정보 추가
      *
-     * @param fieldError 유효성 검증에 실패한 필드명
-     * @param errorMessage 해당 필드의 error message
+     * @param fieldName 검증 실패 필드명
+     * @param message 검증 실패 메시지
      */
-    public void addValidation(String fieldError, String errorMessage) {
-        this.validation.put(fieldError, errorMessage);
+    public void addValidation(String fieldName, String message) {
+        this.validation.put(fieldName, message);
     }
 }

@@ -80,7 +80,7 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("[실패케이스] 존재하지 않는 제품 단건 조회")
-    void getDetailsNotFoundTest() {
+    void getDetailsProductNotFoundTest() {
         // given
         Product product = Product.builder()
                 .name("foo")
@@ -97,7 +97,7 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("제품 목록 1페이지 조회")
+    @DisplayName("제품 목록 조회")
     void getListTest() {
         // given
         List<Product> products = IntStream.range(1, 31)
@@ -122,8 +122,8 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("제품명 수정")
-    void editProductNameTest() {
+    @DisplayName("제품 수정 - name")
+    void editNameTest() {
         // given
         Product product = Product.builder()
                 .name("foo")
@@ -151,8 +151,8 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("제조사 및 제품 설명 수정")
-    void editProductBrandAndDescriptionTest() {
+    @DisplayName("제품 수정 - brand, description")
+    void editBrandAndDescriptionTest() {
         // given
         Product product = Product.builder()
                 .name("foo")
@@ -205,7 +205,7 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("제품 삭제")
-    void deleteProductTest() {
+    void deleteTest() {
         // given
         Product product = Product.builder()
                 .name("foo")

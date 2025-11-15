@@ -13,16 +13,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Product 도메인 API 제공
+ */
 @Slf4j
 @RestController
-@RequiredArgsConstructor    // 생성자 injection
+@RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
 
     /**
-     * 제품 등록(관리자::수집 파이프라인용)
-     * @param request 제품 등록 요청 DTO
+     * 제품 등록 (관리자::수집 파이프라인용)
      */
     @PostMapping("/api/v1/products")
     public void post(@RequestBody @Valid ProductCreateRequest request) {
@@ -32,8 +34,6 @@ public class ProductController {
 
     /**
      * 제품 단건 조회
-     * @param productId 제품 고유 ID
-     * @return {@link ProductDetailsResponse} 제품 상세 응답 DTO
      */
     @GetMapping("/api/v1/products/{productId}")
     public ProductDetailsResponse getDetails(@PathVariable Long productId) {
@@ -41,19 +41,24 @@ public class ProductController {
     }
 
     /**
-     * 제품 목록 조회(검색 쿼리, 페이징, 정렬: price, popularity)
-     * @return {@link ProductListResponse} 제품 목록 응답 DTO 리스트
+     * 제품 목록 조회 (검색 쿼리, 페이징, 정렬: price, popularity)
      */
     @GetMapping("/api/v1/products")
     public List<ProductListResponse> getList(@ModelAttribute ProductPageRequest request) {
         return productService.getList(request);
     }
 
+    /**
+     * 제품 정보 수정
+     */
     @PatchMapping("/api/v1/products/{productId}")
     public void edit(@PathVariable Long productId, @RequestBody @Valid ProductEditRequest request) {
         productService.edit(productId, request);
     }
 
+    /**
+     * 제품 삭제
+     */
     @DeleteMapping("/api/v1/products/{productId}")
     public void delete(@PathVariable Long productId) {
         productService.delete(productId);

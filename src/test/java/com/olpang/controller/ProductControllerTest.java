@@ -26,8 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc   // mockMvc 사용하기 위해 @WebMvcTest에서 가져옴
-@SpringBootTest // service, repository 사용 -> 통합 테스트로 변경
+@AutoConfigureMockMvc     // mockMvc 사용
+@SpringBootTest     // 통합 테스트
 @Transactional
 class ProductControllerTest {
 
@@ -41,7 +41,7 @@ class ProductControllerTest {
     private ProductRepository productRepository;
 
     @Autowired
-    private EntityManager entityManager; // 시퀀스 초기화용
+    private EntityManager entityManager;
 
     @BeforeEach
     void clean() {
@@ -52,8 +52,7 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("요청 값을 JSON에 담아 POST /api/v1/products 요청 시 DB에 값이 저장된다.")
-    // mockMvc 테스트 최소화하기, SpringBootTest로 repository(db)에 저장되는지 (= 실제로 save 작업이 잘 이루어졌는지) 확인하는 것이 중요
+    @DisplayName("제품 등록")
     void postTest() throws Exception {
         // given
         ProductCreateRequest request = ProductCreateRequest.builder()
@@ -66,8 +65,8 @@ class ProductControllerTest {
 
         // when
         mockMvc.perform(post("/api/v1/products")
-                                .contentType(APPLICATION_JSON)
-                                .content(jsonRequest))
+                        .contentType(APPLICATION_JSON)
+                        .content(jsonRequest))
                 .andExpect(status().isOk())
                 .andDo(print());
 
@@ -81,12 +80,11 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("[실패케이스] POST /api/v1/products JSON 요청 시 name 값은 필수이다.")
-    void invalidRequestTest() throws Exception {
+    @DisplayName("[실패케이스] 제품 등록 시 필드 누락")
+    void validationFailedHandlerTest() throws Exception {
         // given
         ProductCreateRequest request = ProductCreateRequest.builder()
-                // 제품명 요청 값 누락
-//                .name("제품명")
+                // 제품명 누락
                 .brand("제조사")
                 .description("제품에 대한 설명입니다.")
                 .build();
@@ -103,8 +101,8 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("[실패케이스] 유효하지 않은 제품 정보 등록")
-    void postInvalidRequestTest() throws Exception {
+    @DisplayName("[실패케이스] 제품 등록 시 유효하지 않은 정보 포함")
+    void commonHandlerTest() throws Exception {
         // given
         ProductCreateRequest request = ProductCreateRequest.builder()
                 .name("제품명")
@@ -146,7 +144,7 @@ class ProductControllerTest {
 
     @Test
     @DisplayName("[실패케이스] 존재하지 않는 제품 단건 조회")
-    void getDetailsNotFoundTest() throws Exception {
+    void getDetailsProductNotFoundTest() throws Exception {
         // expected
         mockMvc.perform(get("/api/v1/products/{productId}", 1L))
                 .andExpect(status().isNotFound())
@@ -154,7 +152,7 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("제품 목록 조회 - 조회한 목록과 제품명/제품설명 문자열의 길이 제한을 검증한다.")
+    @DisplayName("제품 목록 조회 - 문자열 길이 요약 검증")
     void getListFieldLengthTest() throws Exception {
 
         // given
@@ -187,8 +185,8 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("제품 목록 조회 - 제품 1페이지 조회 및 id 내림차순 정렬")
-    void getListWithPaginationTest() throws Exception {
+    @DisplayName("제품 목록 조회 - 제품 1페이지 조회 및 ID 내림차순 정렬 검증")
+    void getListPaginationTest() throws Exception {
         // given
         List<Product> requestProduct = IntStream.range(1, 31)
                 .mapToObj(i -> Product.builder()
@@ -211,7 +209,7 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("제품 목록 조회 - 페이지를 0으로 요청하면 첫 페이지를 가져온다.")
+    @DisplayName("제품 목록 조회 - 0번째 페이지 요청 시 첫 페이지 조회 검증")
     void getPage0Test() throws Exception {
         // given
         List<Product> requestProduct = IntStream.range(1, 31)
@@ -236,7 +234,7 @@ class ProductControllerTest {
 
     @Test
     @DisplayName("제품 정보 수정")
-    void editProductTest() throws Exception {
+    void editTest() throws Exception {
         // given
         Product product = Product.builder()
                 .name("foo")
@@ -280,7 +278,7 @@ class ProductControllerTest {
 
     @Test
     @DisplayName("제품 삭제")
-    void deleteProductTest() throws Exception {
+    void deleteTest() throws Exception {
         // given
         Product product = Product.builder()
                 .name("foo")
@@ -292,7 +290,7 @@ class ProductControllerTest {
 
         // expected
         mockMvc.perform(delete("/api/v1/products/{productId}", product.getId())
-                .contentType(APPLICATION_JSON))
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
