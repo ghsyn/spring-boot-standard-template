@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 
+/**
+ * 제품 수정 요청 DTO
+ */
 @Getter
 @Builder
 public class ProductEditRequest {

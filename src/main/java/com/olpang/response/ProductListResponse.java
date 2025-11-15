@@ -7,9 +7,8 @@ import lombok.Getter;
 import static java.lang.Math.min;
 
 /**
- * 제품 목록(요약 정보) 응답 DTO 클래스
- * - 리스트 및 검색 결과용
- * - 성능을 위해 최소 필드만 포함
+ * 제품 목록 조회용 요약 정보 응답 DTO
+ * 성능을 위해 최소 필드만 포함
  */
 @Getter
 public class ProductListResponse {
@@ -19,6 +18,9 @@ public class ProductListResponse {
     private final String brand;
     private final String description;
 
+    /**
+     * Entity -> DTO 변환
+     */
     public static ProductListResponse of(Product product) {
         return ProductListResponse.builder()
                 .id(product.getId())
@@ -29,9 +31,9 @@ public class ProductListResponse {
     }
 
     /**
-     * name 문자열 길이 최대 10자
-     * description 문자열 길이 최대 50자
-     * (::목록 내 제품 정보 요약)
+     * 문자열 요약 처리
+     * - name: 최대 10자
+     * - description: 최대 50자
      */
     @Builder
     public ProductListResponse(Long id, String name, String brand, String description) {

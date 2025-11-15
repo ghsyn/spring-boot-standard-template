@@ -6,6 +6,9 @@ import lombok.Setter;
 
 import static java.lang.Math.*;
 
+/**
+ * 제품 목록 조회용 페이지 요청 DTO
+ */
 @Getter
 @Setter
 @Builder
@@ -19,6 +22,10 @@ public class ProductPageRequest {
     @Builder.Default
     private Integer size = 10;
 
+    /**
+     * 페이지 번호 offset 계산
+     * @return 조회 시작 offset
+     */
     public long getOffset() {
         return (long) (max(1, page) - 1) * min(size, MAX_SIZE);
     }

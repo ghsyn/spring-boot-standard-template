@@ -8,6 +8,10 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+/**
+ * 제품 커스텀 Repository 구현체
+ * ::Spring 컨테이너에 Bean 등록된 jpaQueryFactory를 생성자 주입하여 QueryDSL 실행
+ */
 @RequiredArgsConstructor
 public class ProductRepositoryImpl implements ProductRepositoryCustom {
 

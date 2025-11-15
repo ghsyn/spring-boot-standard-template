@@ -4,12 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * 제품 상세 정보 응답 DTO 클래스
- * - 상세 페이지용
- * - 설명, 이미지, 재고 등 많은 정보 포함
- *
- * +) 엔티티는 DB 설계 변경에 따라 바뀔 수 있으므로 직접 노출하지 않고,
- * 서비스 정책에 맞는 응답 형태로 변환하는 API 응답 전용 클래스 별도로 둠
+ * 제품 단건 조회용 상세 정보 응답 DTO
+ * 엔티티 직접 노출하지 않고, 서비스 정책에 맞게 응답 형태 변환
  */
 @Getter
 public class ProductDetailsResponse {

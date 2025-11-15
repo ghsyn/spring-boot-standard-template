@@ -6,8 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
+/**
+ * 제품 등록 요청 DTO
+ */
 @Getter
 @Setter
 public class ProductCreateRequest {
@@ -28,6 +29,10 @@ public class ProductCreateRequest {
         this.description = description;
     }
 
+    /**
+     * description 필드 XSS 스크립트 검증
+     * @throws InvalidRequestException 스크립트 태그 포함할 경우
+     */
     public void doValidate() {
         if (description.matches(".*<script>.*</script>.*")) {
             throw new InvalidRequestException("description", "제품 정보에 스크립트 태그를 사용할 수 없습니다.");

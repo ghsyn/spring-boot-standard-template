@@ -17,7 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -42,7 +43,7 @@ public class ProductControllerDocTest {
 
     @Test
     @DisplayName("제품 단건 조회")
-    void test1() throws Exception {
+    void getDetailsDocTest() throws Exception {
         // given
         Product product = Product.builder()
                 .name("아토베리어365 크림")
@@ -72,7 +73,7 @@ public class ProductControllerDocTest {
 
     @Test
     @DisplayName("제품 등록")
-    void test2() throws Exception {
+    void postDocTest() throws Exception {
         // given
         ProductCreateRequest request = ProductCreateRequest.builder()
                 .name("아토베리어365 크림")
