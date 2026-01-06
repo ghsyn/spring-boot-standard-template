@@ -1,4 +1,4 @@
-= Olpang API
+= Sytk Booking API
 :icons: front
 :source-highlighter: highlightjs
 :toc: left

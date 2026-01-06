@@ -5,9 +5,8 @@ plugins {
     id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
 
-group = 'com.olpang'
+group = 'com.sytk'
 version = '0.0.1-SNAPSHOT'
-description = 'olpang'
 
 java {
     toolchain {
